@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans    
+                        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd 
+                        http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+">
+	                      	
+	<!-- 配置数据源 -->
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="initialSize" value="${jdbc.initialSize}"></property>
+		<property name="maxTotal" value="${jdbc.maxActive}"></property>
+		<property name="maxIdle" value="${jdbc.maxIdle}"></property>
+		<property name="minIdle" value="${jdbc.minIdle}"></property>
+		<property name="maxWaitMillis" value="${jdbc.maxWait}"></property>
+	</bean>
+
+	<bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 配置实体扫描路径，多个package可以用分号; 逗号, 分隔， 支持通配符*-->
+		<!-- com.a.b.entity;com.a.c.entity;com.d.*.entity-->
+		<property name="typeAliasesPackage" value="com.llf.ssm.bo"/>
+		<property name="mapperLocations" value="classpath:mybatis/mapper/*.xml"/>
+		<!--<property name="configuration" ref="mybatisConfig"/>-->
+		<property name="plugins">
+			<array>
+				<!-- 分页插件配置 -->
+				<bean id="paginationInterceptor"
+					  class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"/>
+				<!-- 乐观锁插件 -->
+				<bean id="optimisticLockerInterceptor"
+					  class="com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor">
+				</bean>
+				<!-- 性能拦截器，兼打印sql，不建议生产环境配置-->
+				<bean id="performanceInterceptor"
+					  class="com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor"/>
+			</array>
+		</property>
+	</bean>
+	<!-- 配置mybatis 扫描mapper接口的路径, 相当于注解@MapperScan，@MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")-->
+	<!--<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">-->
+		<!--<property name="basePackage" value="com.llf.ssm.mapper"/>-->
+	<!--</bean>-->
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 ,自动扫描了所有的XxxxMapper.xml对应的mapper接口文件,只要Mapper接口类和Mapper映射文件对应起来就可以了-->  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.llf.ssm.dao" />
+        <!--<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>-->
+    </bean>
+	
+	<!-- Transaction manager for a single JDBC DataSource -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+	<!--<bean id="mybatisConfig" class="com.baomidou.mybatisplus.core.MybatisConfiguration">-->
+		<!--<property name="mapUnderscoreToCamelCase" value="true"/>-->
+		<!--&lt;!&ndash; 部分数据库不识别默认的NULL类型（比如oracle，需要配置该属性 &ndash;&gt;-->
+		<!--&lt;!&ndash;<property name="jdbcTypeForNull">&ndash;&gt;-->
+			<!--&lt;!&ndash;<util:constant static-field="org.apache.ibatis.type.JdbcType.NULL"/>&ndash;&gt;-->
+		<!--&lt;!&ndash;</property>&ndash;&gt;-->
+	<!--</bean>-->
+
+
+
+
+	<!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+    
+</beans>

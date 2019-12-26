@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.llf.ssm.dao.TestDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.llf.ssm.bo.Test">
+        <id column="uid" property="uid" />
+        <result column="name" property="name" />
+        <result column="sex" property="sex" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        uid, name, sex, create_time
+    </sql>
+
+    <!-- 根据主键获取 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test
+        where uid = #{uid}
+    </select>
+
+    <!-- 根据主键删除 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from test
+        where uid = #{uid}
+    </delete>
+
+    <!-- 根据主键删除 -->
+    <delete id="deleteBatch" >
+        delete from test
+        where uid in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="uid" parameterType="com.llf.ssm.bo.Test">
+        insert into test (
+        <include refid="Base_Column_List" />
+        )
+        values ( #{uid}, #{name}, #{sex}, #{createTime})
+    </insert>
+
+    <!-- 根据主键修改 -->
+    <update id="updateByPrimaryKey" parameterType="com.llf.ssm.bo.Test">
+        update test
+        set
+        name = #{name},
+        sex = #{sex},
+        create_time = #{createTime}       
+        where uid = #{uid}
+    </update>
+
+    <!-- 条件查询 -->
+    <select id="selectByProperty" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from test
+        <where>
+            <if test=" record.uid != null and record.uid != '' ">
+                and uid = #{record.uid}
+            </if>
+            <if test=" record.name != null and record.name != '' ">
+                and name = #{record.name}
+            </if>
+            <if test=" record.sex != null and record.sex != '' ">
+                and sex = #{record.sex}
+            </if>
+            <if test=" record.createTime != null ">
+                and create_time = #{record.createTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 批量新增 -->
+    <insert id="insertBatch" useGeneratedKeys="true" keyProperty="uid" parameterType="com.llf.ssm.bo.Test">
+        insert into test (
+        <include refid="Base_Column_List" />
+        ) values
+        <foreach collection="list" item="item" separator=",">
+            ( #{item.uid}, #{item.name}, #{item.sex}, #{item.createTime})
+        </foreach>
+    </insert>
+
+</mapper>

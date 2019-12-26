@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <!-- 数据库驱动包位置 -->  
+  <classPathEntry location="E:/1dev-data/repository/mysql/mysql-connector-java/5.1.44/mysql-connector-java-5.1.44-bin.jar" />
+
+    <!-- targetRuntime="MyBatis3Simple" targetRuntime="MyBatis3" -->
+  <context id="mysql" defaultModelType="hierarchical" targetRuntime="MyBatis3">
+  	<commentGenerator>  
+        <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+        <property name="suppressDate" value="true"/>
+        <property name="suppressAllComments" value="true"/>  
+    </commentGenerator>
+    
+    <!-- 数据库链接URL、用户名、密码 -->
+    <jdbcConnection connectionURL="jdbc:mysql://192.168.46.128:3306/project?useUnicode=true&amp;characterEncoding=utf-8" driverClass="com.mysql.jdbc.Driver"  userId="root" password="123abc">
+      <!--开启读取数据库注释：为了把注释写到相对应的注解里面-->
+      <property name="remarksReporting" value="true"></property>
+    </jdbcConnection>
+      <javaTypeResolver>
+          <property name="forceBigDecimals" value="false"/>
+      </javaTypeResolver>
+    <!-- 生成模型的包名和位置 --> 
+    <javaModelGenerator targetPackage="com.llf.ssm.bo" targetProject="project/src/main/java" >
+    	<property name="enableSubPackages" value="true"/>
+        <!--设置注解，%s占位符,读取数据库字段注释（多个注解用;分隔)，一个占位符读取数据库字段注释，第二数据库字段排序-->
+        <property name="annotation" value="@Excel(name = &quot;%s&quot;, fixedIndex = %s);@ApiParam(value = &quot;%s&quot;)"/>
+        <!--设置注解需要的包路径，多个用,分隔-->
+        <property name="annotationTargetPackage" value="cn.afterturn.easypoi.excel.annotation.Excel,io.swagger.annotations.ApiParam"/>
+    </javaModelGenerator>
+    
+    <!-- 生成的映射文件报名和位置 -->
+    <sqlMapGenerator targetPackage="com.llf.ssm.mapper" targetProject="project/src/main/java">
+    	<property name="enableSubPackages" value="true"/>
+    </sqlMapGenerator>
+    
+    <!-- 生成DAO的包名和位置 --> 
+    <javaClientGenerator type="XMLMAPPER" targetPackage="com.llf.ssm.dao" targetProject="project/src/main/java"  >
+    	<property name="enableSubPackages" value="true"/>
+    </javaClientGenerator>
+
+      <!--生成service,serviceImpl-->
+      <javaServiceGenerator type="" targetPackage="com.llf.ssm.service" targetProject="src/main/java"
+                            implementationPackage="com.llf.ssm.service.impl">
+
+      </javaServiceGenerator>
+
+      <!--生成controller-->
+      <javaControllerGenerator targetPackage="com.llf.ssm.controller" targetProject="src/main/java">
+          <!--<property name="superClass" value="com.shsoft.platform.ctrl.BaseController"></property>-->
+      </javaControllerGenerator>
+    
+    <!-- longtext 转 String -->
+      <!--<columnOverride column="user_name" jdbcType="VARCHAR" />-->
+      <!--生成对应表及类名,添加:enableInsertBatch(是否生成批量添加语句,目前只支持oracle),enableInsertBatchIgnore:批量添加语句中忽略的字段-->
+      <table tableName="test" domainObjectName="Test" enableCountByExample="true" enableUpdateByExample="true"
+             enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="false" enableInsertBatch="true"
+             enableListParam="true">
+
+      </table>
+  </context>
+</generatorConfiguration>
